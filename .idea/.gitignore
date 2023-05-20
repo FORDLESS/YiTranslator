@@ -1,22 +1,4 @@
 # 默认忽略的文件
 /shelf/
 /workspace.xml
-Gametranslater/cache 
-*.pyc
-*.pyc
-*.pyc 
-*.hlsl
-*.hlsli
-*.dds
-*.mp3
-*.sqlite
-*.tlog
-*.log
-*.iobj
-*.ipdb
-*.obj
-*.res
-*.pdb
-*.recipe
-*.wav 
-build/
+
