@@ -1,0 +1,16 @@
+
+2023-05-13 00:18:05,511 - WARNING - Using CPU. Note: This module is much faster with a GPU.
+
+2023-05-24 14:19:30,660 - ERROR - 打开时出现未知错误: 'NoneType' object is not subscriptable
+2023-06-29 14:02:33,184 - ERROR - 初始化时出现错误: HTTPSConnectionPool(host='translate.alibaba.com', port=443): Max retries exceeded with url: /api/translate/csrftoken (Caused by SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:997)')))
+2023-06-29 14:19:40,145 - ERROR - 初始化时出现错误: HTTPSConnectionPool(host='translate.alibaba.com', port=443): Max retries exceeded with url: /api/translate/csrftoken (Caused by SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:997)')))
+2023-06-29 14:23:14,582 - ERROR - 初始化时出现错误: HTTPSConnectionPool(host='translate.alibaba.com', port=443): Max retries exceeded with url: /api/translate/csrftoken (Caused by SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:997)')))
+2023-06-29 14:26:32,801 - ERROR - 切换翻译接口时出现错误，该错误常由网络原因引起: HTTPSConnectionPool(host='translate.alibaba.com', port=443): Max retries exceeded with url: /api/translate/csrftoken (Caused by SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:997)')))
+2023-06-29 14:45:28,610 - ERROR - 初始化时出现错误: HTTPSConnectionPool(host='fanyi.baidu.com', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:997)')))
+2023-06-29 14:46:14,783 - ERROR - 初始化时出现错误: '_tkinter.tkapp' object has no attribute 'textOBJ'
+2023-06-29 17:05:08,570 - ERROR - 翻译时出现错误: HTTPSConnectionPool(host='fanyi.baidu.com', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:997)')))
+2023-06-29 17:05:25,281 - ERROR - 翻译时出现错误: HTTPSConnectionPool(host='fanyi.baidu.com', port=443): Max retries exceeded with url: /transapi (Caused by SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:997)')))
+2023-06-29 17:05:27,111 - ERROR - 翻译时出现错误: HTTPSConnectionPool(host='fanyi.baidu.com', port=443): Max retries exceeded with url: /transapi (Caused by SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:997)')))
+2023-06-29 17:06:04,355 - ERROR - 翻译时出现错误: HTTPSConnectionPool(host='fanyi.baidu.com', port=443): Max retries exceeded with url: / (Caused by SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:997)')))
+2023-07-13 13:47:43,721 - ERROR - 初始化时出现错误: HTTPSConnectionPool(host='translate.alibaba.com', port=443): Max retries exceeded with url: /api/translate/csrftoken (Caused by SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:997)')))
+2023-07-13 15:35:09,907 - ERROR - 初始化时出现错误: HTTPSConnectionPool(host='aidemo.youdao.com', port=443): Max retries exceeded with url: /ocrapi1 (Caused by SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:997)')))
