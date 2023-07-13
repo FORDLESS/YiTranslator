@@ -1,0 +1,135 @@
+{
+    "User": {
+        "screenwidth": 1920,
+        "screenheight": 1080,
+        "CUDA": false
+    },
+    "tencentAPI": {
+        "secretID": "AKIDJUWP4SoywiEbpsjMmzxeAUZVGoKm4DAw",
+        "secretKey": "kMn35wnW0GLCgvyodidNxIcqumeYDgwy"
+    },
+    "baiduAPI": {
+        "secretID": "20210522000838560",
+        "secretKey": "RSNdzS5HIIlVdgzrudc4"
+    },
+    "area": {
+        "x": 956,
+        "y": 693,
+        "width": 341,
+        "height": 48,
+        "transparency": 0.5,
+        "color": "#28283e",
+        "transparent": false
+    },
+    "hotKey": {
+        "use": true,
+        "start_pause": {
+            "key": [
+                2,
+                68
+            ],
+            "flag": true
+        },
+        "auto_switch": {
+            "key": [
+                4,
+                65
+            ],
+            "flag": ""
+        },
+        "reTrans": {
+            "key": [
+                4,
+                82
+            ],
+            "flag": ""
+        },
+        "sourceHide": {
+            "key": [
+                4,
+                72
+            ],
+            "flag": ""
+        },
+        "source": {
+            "key": [
+                2,
+                89
+            ],
+            "flag": ""
+        },
+        "result": {
+            "key": [
+                2,
+                83
+            ],
+            "flag": ""
+        },
+        "areaHide": {
+            "key": [
+                2,
+                72
+            ],
+            "flag": ""
+        },
+        "minsize": {
+            "key": [
+                1,
+                40
+            ],
+            "flag": true
+        },
+        "power": {
+            "key": [
+                0,
+                35
+            ],
+            "flag": true
+        }
+    },
+    "font": {
+        "setting": [
+            "楷体",
+            12,
+            "#000000",
+            "bold"
+        ],
+        "source": [
+            "Times New Roman",
+            16,
+            "#ff00ff",
+            "normal"
+        ],
+        "result": [
+            "楷体",
+            18,
+            "#000000",
+            "normal"
+        ]
+    },
+    "background": {
+        "bg": "background1.png",
+        "bg2": "background2.png",
+        "spr": 0.95
+    },
+    "language": "俄语",
+    "selected_languages": [
+        "英语",
+        "日语",
+        "繁体中文"
+    ],
+    "API_CO": null,
+    "Auto": false,
+    "start_pause": false,
+    "public_trans": "ali",
+    "input": "OCR",
+    "OCR": "local",
+    "sourceHide": false,
+    "ocr_setting": {
+        "mergelines": false,
+        "ocr_auto_method": 0,
+        "ocr_stable_sim": 0.7,
+        "ocr_diff_sim": 0.95,
+        "ocr_interval": 5.0
+    }
+}
