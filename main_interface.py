@@ -8,7 +8,7 @@ from utils import winhotkey
 from Global import save_settings, set_config
 from getText.clipboard import Clipboard
 from public import ImageLoader, MyButton, PageButton, BreathingLabel, SwitchButton
-from translator import ali, baidu, tencent, microsoft, caiyun, youdao, sogou
+from translator import ali, baidu, tencent, microsoft, caiyun, youdao, sogou,API
 from utils.canvasText import TextCanvas
 from getText.OCRengine import OCR
 
@@ -162,11 +162,11 @@ class MainGUI(tk.Tk):
             self.inputCase = OCR()  # OCR实例
         if Global.api_co:
             if Global.api_co == "Baidu":
-                pass
+                self.tsaCase = API.BaiduAPI()
             elif Global.api_co == "Tencent":
-                pass
+                self.tsaCase = API.TencentAPI()
             elif Global.api_co == "TencentImg":
-                pass
+                self.tsaCase = API.TencentImg()
         elif Global.public_trans == "ali":
             self.tsaCase = ali.Ali()
         elif Global.public_trans == "bd":
@@ -385,6 +385,10 @@ class MainGUI(tk.Tk):
         self.result_fontColor = set_config["font"]["result"][2]
 
     def reTrans(self):
+        if Global.api_co == "TencentImg":
+            self.source_text,self.result_text = self.tsaCase.translate(Global.language)
+            self.drawText()
+            return
         if Global.inputSource == "cbd":
             self.source_text = self.inputCase.gettext()
         else:

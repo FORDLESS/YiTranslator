@@ -9,7 +9,7 @@ from Global import save_settings, set_config
 from getText.OCRengine import OCR
 from public import ImageLoader, MyButton, PageButton, SwitchButton
 from getText.clipboard import Clipboard
-from translator import ali, baidu, tencent, microsoft, caiyun, youdao, sogou
+from translator import ali, baidu, tencent, microsoft, caiyun, youdao, sogou,API
 
 
 # noinspection PyAttributeOutsideInit
@@ -61,7 +61,7 @@ class SetGUI(tk.Toplevel):
 
         style = ttk.Style()
         style.configure("Custom.TCombobox", font=self.font12, padding=(10, 5, 10, 5))
-        style.configure('Custom.TSpinbox',padding=(5, 2, 5, 0))
+        style.configure('Custom.TSpinbox', padding=(5, 2, 5, 0))
 
     def frame_init(self):
         self.vertical_frame = tk.Frame(self, height=432, width=120, bg="#666666")
@@ -513,9 +513,10 @@ class SetGUI(tk.Toplevel):
         OCR_label_3 = tk.Label(self.OCR_page_label, text="自动执行规则", font=self.font12, fg=self.fontColor)
         OCR_label_4 = tk.Label(self.OCR_page_label, text="执行周期（秒）", font=self.font12, fg=self.fontColor)
         OCR_label_5 = tk.Label(self.OCR_page_label, text="图像一致性阈值", font=self.font12, fg=self.fontColor)
-        OCR_label_6 = tk.Label(self.OCR_page_label, text="图像一致性阈值为上一次扫描图像与当前扫描图像的\n像素相似度,"
-                                                         "设置值大表明即使很相似也进行扫描，\n即扫描频率高，只在分析图像更新时有效",
-                               justify="left", font=self.font12, fg="#33ccff")
+        OCR_label_6 = tk.Label(self.OCR_page_label, text="识别场景", font=self.font12, fg=self.fontColor)
+        OCR_label_7 = tk.Label(self.OCR_page_label, text="图像一致性阈值设置值越大，扫描频率越高，在分析图像\n更新时有效,原理为比较"
+                                                         "先后两张扫描图像的像素相似度\n\n识别场景，用于视频字幕请使用动态模式",
+                               justify="left", font=self.font10, fg="#33ccff")
 
         self.OCR_button_local = SwitchButton(self.OCR_page_label, switch=Global.OCR == "local",
                                              marshalling="ocr", off_image=self.imageLoader.get_image("close"),
@@ -537,12 +538,17 @@ class SetGUI(tk.Toplevel):
         self.OCR_spin_sim = ttk.Spinbox(self.OCR_page_label, from_=0, to_=1, increment=0.01, command=self.set_sim, width=10
                                         , textvariable=self.sim_val, state="readonly", wrap=True, style='Custom.TSpinbox')
         self.sim_val.set(Global.ocr_setting["ocr_diff_sim"])
+        self.scenes_combobox = ttk.Combobox(self.OCR_page_label, state='readonly', style="Custom.TCombobox",
+                                               values=["    静态", "    动态"], width=8)
+        self.scenes_combobox.current(set_config["ocr_setting"]["ocr_scenes"])
+        self.scenes_combobox.bind("<<ComboboxSelected>>", self.select_scenes)
         OCR_label_1.place(x=20, y=25)
         OCR_label_2.place(x=30, y=120)
         OCR_label_3.place(x=30, y=155)
         OCR_label_4.place(x=30, y=190)
         OCR_label_5.place(x=30, y=225)
-        OCR_label_6.place(x=20, y=260)
+        OCR_label_6.place(x=30, y=260)
+        OCR_label_7.place(x=20, y=300)
         OCR_label_local.place(x=30, y=60)
         OCR_label_yd.place(x=230, y=60)
         self.OCR_button_local.place(x=130, y=63)
@@ -551,6 +557,7 @@ class SetGUI(tk.Toplevel):
         self.autoRules_combobox.place(x=300, y=155)
         self.OCR_spin_interval.place(x=300, y=190)
         self.OCR_spin_sim.place(x=300, y=225)
+        self.scenes_combobox.place(x=300,y=260)
 
         # language_page_show
         self.language_page_label = tk.Label(self.bg_label, image=self.imageLoader.get_image("bg2"), compound="center",
@@ -827,9 +834,10 @@ class SetGUI(tk.Toplevel):
     def baiduSwitch(self):
         if self.personal_baidu_button.switch:
             set_config["API_CO"] = "Baidu"
-
+            self.main_gui.tsaCase = API.BaiduAPI()
         else:
             set_config["API_CO"] = None
+            self.publicSwitch()
         save_settings(Global.setting_path)
         public.update_global()
         print(Global.api_co)
@@ -837,8 +845,10 @@ class SetGUI(tk.Toplevel):
     def tencentSwitch(self):
         if self.personal_tencent_button.switch:
             set_config["API_CO"] = "Tencent"
+            self.main_gui.tsaCase = API.TencentAPI()
         else:
             set_config["API_CO"] = None
+            self.publicSwitch()  # 主动关闭私人API时开启公共API
         save_settings(Global.setting_path)
         public.update_global()
         print(Global.api_co)
@@ -846,8 +856,10 @@ class SetGUI(tk.Toplevel):
     def tencentImg_switch(self):
         if self.personal_tencentImg_button.switch:
             set_config["API_CO"] = "TencentImg"
+            self.main_gui.tsaCase = API.TencentImg()
         else:
             set_config["API_CO"] = None
+            self.publicSwitch()
         save_settings(Global.setting_path)
         public.update_global()
         print(Global.api_co)
@@ -920,8 +932,14 @@ class SetGUI(tk.Toplevel):
         save_settings(Global.setting_path)
         public.update_global()
 
-    def select_rules(self,event):
+    def select_rules(self, event):
         set_config["ocr_setting"]["ocr_auto_method"] = self.autoRules_combobox.current()
+        save_settings(Global.setting_path)
+        public.update_global()
+        self.focus()
+
+    def select_scenes(self, event):
+        set_config["ocr_setting"]["ocr_scenes"] = self.scenes_combobox.current()
         save_settings(Global.setting_path)
         public.update_global()
         self.focus()

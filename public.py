@@ -209,18 +209,18 @@ def resizeImage(container, image, width=None, height=None):  # 父容器，Image
     if width is None:
         width = container.winfo_width()
         height = container.winfo_height()
-    if not isinstance(image,Image.Image):
+    if not isinstance(image, Image.Image):
         image = Image.open(image)
     image = image.resize((width, height), Image.ANTIALIAS)
     photo = ImageTk.PhotoImage(image)
-    return image,photo
+    return image, photo
 
 
 def transparency(image, alpha=50):  # 设置图片透明度,传入Image对象
     image = image.convert("RGBA")
     image.putalpha(alpha)
     photo = ImageTk.PhotoImage(image)
-    return image,photo
+    return image, photo
 
 
 def update_global():
@@ -242,11 +242,12 @@ def update_global():
     Global.sourceHide = set_config["sourceHide"]
     Global.ocr_setting = set_config["ocr_setting"]
 
-def secret_load():
-    if Global.api_co == "Tencent":
+
+def secret_load(name):
+    if name == "Tencent":
         uuid = set_config["tencentAPI"]["secretID"]
         key = set_config["tencentAPI"]["secretKey"]
-    elif Global.api_co == "Baidu":
+    elif name == "Baidu":
         uuid = set_config["baiduAPI"]["secretID"]
         key = set_config["baiduAPI"]["secretKey"]
     else:
@@ -283,6 +284,62 @@ def regulate_hotkey(hotkey):  # 用于同步记录和注册按键的键码
     else:
         hotkey = [0, hotkey[0]]
         return hotkey
+
+
+def text_process(string):
+    vertical = False
+    juhe = []  # 存储聚合后的文本行
+    box = []  # 存储每个文本框的坐标信息
+    mids = []  # 存储每个文本框的中间点坐标
+    ranges = []  # 存储每个文本框的范围
+    text = []  # 存储每个文本框的文本内容
+    for i in range(len(string) // 2):
+        # 将每个索引对应的偶数索引位置的文本以 , 分割为多个数字，并将其转换为整数。然后将这些数字以列表的形式添加到 box 列表中
+        box.append([int(_) for _ in string[i * 2].split(',')])
+        text.append(string[i * 2 + 1])  # 将每个索引对应的奇数索引位置的文本添加到 text 列表中。
+    for i in range(len(box)):
+        if vertical:
+            mid = box[i][0] + box[i][2] + box[i][4] + box[i][6]
+        else:
+            mid = box[i][1] + box[i][3] + box[i][5] + box[i][7]
+        mid /= 4
+        mids.append(mid)  # 计算文本框的中间点坐标 mid并添加到列表
+        if vertical:
+            range_ = ((box[i][0] + box[i][6]) / 2, (box[i][2] + box[i][4]) / 2)
+        else:
+            range_ = ((box[i][1] + box[i][3]) / 2, (box[i][7] + box[i][5]) / 2)
+        ranges.append(range_)  # 计算文本框的范围 range_并添加到列表
+
+    passed = []  # 存储已经处理过的文本框的索引
+    for i in range(len(box)):
+        ls = [i]
+        if i in passed:
+            continue
+        for j in range(i + 1, len(box)):
+            if j in passed:
+                continue
+            # 如果文本框 j 的范围在文本框 i 的中间点的范围内，并且文本框 i 的范围在文本框 j 的中间点的范围内：
+            if ranges[j][0] < mids[i] < ranges[j][1] and ranges[i][0] < mids[j] < ranges[i][1]:
+                passed.append(j)
+                ls.append(j)
+        juhe.append(ls)
+
+    for i in range(len(juhe)):  # 对聚合后的文本进行排序
+        if vertical:
+            juhe[i].sort(key=lambda x: box[x][1])  # 顶部
+        else:
+            juhe[i].sort(key=lambda x: box[x][0])  # 对列表 juhe 中的每个元素按照文本框索引 x 所对应的左侧坐标排序
+    if vertical:
+        juhe.sort(key=lambda x: -box[x[0]][0])
+    else:
+        juhe.sort(key=lambda x: box[x[0]][1])
+
+    lines = []  # 用于存储最终的文本行
+    for _j in juhe:
+        # 将每个文本框索引 _ 对应的文本内容添加到列表 text 中。
+        # 将列表 text 中的文本内容用空格连接起来，并添加到列表 lines 中
+        lines.append(' '.join([text[_] for _ in _j]))
+    return lines
 
 
 if __name__ == "__main__":
