@@ -12,7 +12,6 @@ rectY = 0
 hotKey = None
 hotkey_use = False
 language = None
-CUDA = False
 api_co = None  # 私人接口名
 auto = False  # 是否自动
 start_pause = False  # 是否暂停
@@ -21,16 +20,15 @@ inputSource = None  # 输入方式名
 OCR = None  # OCR名
 sourceHide = False  # 是否隐藏原文
 ocr_setting = None
+quick_lan = []
 
 b_flag = False
 getresultRunning = False
 getsourceRunning = False
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-setting_path = os.path.join(BASE_DIR,"files", "settings.json")
+setting_path = os.path.join(BASE_DIR, "files", "settings.json")
 
-
-quick_lan = []
 Baidu_ERROR_map = {"52001": "请求超时，请检查网络连接", "52002": "系统错误，百度抽风，请重试", "52003": " 请检查id是否正确或者服务是否开通",
                    "54000": "必填参数为空，不应该出现的错误，请联系作者", "54001": "签名错误，请联系作者", "54003": "访问频率过高，请稍后重试",
                    "54004": "账户免费额度用尽，建议换个接口", "54005": "超长文本频繁请求，请稍后重试", "58000": "客户端IP非法，"
@@ -178,51 +176,57 @@ def create_default_json():
             "secretKey": ""
         },
         "area": {
-            "x": 454.1935483870968,
-            "y": 528.3870967741935,
-            "width": 650.9838709677417,
-            "height": 325.86021505376345
+            "x": 1075,
+            "y": 447,
+            "width": 143,
+            "height": 51,
+            "transparency": 0.5,
+            "color": "#28283e",
+            "transparent": False,
+            "bg_color": "#28283e",
+            "bdwidth": 0,
+            "bd_color": "red"
         },
         "hotKey": {
             "use": False,
             "start_pause": {
                 "key": [
                     2,
-                    69
+                    68
                 ],
-                "flag": True
+                "flag": False
             },
             "auto_switch": {
                 "key": [
-                    0,
-                    0
+                    4,
+                    65
                 ],
                 "flag": ""
             },
             "reTrans": {
                 "key": [
-                    2,
+                    4,
                     82
                 ],
                 "flag": ""
             },
             "sourceHide": {
                 "key": [
-                    2,
-                    70
+                    4,
+                    72
                 ],
                 "flag": ""
             },
             "source": {
                 "key": [
-                    1,
-                    96
+                    2,
+                    89
                 ],
                 "flag": ""
             },
             "result": {
                 "key": [
-                    1,
+                    2,
                     83
                 ],
                 "flag": ""
@@ -230,7 +234,7 @@ def create_default_json():
             "areaHide": {
                 "key": [
                     2,
-                    89
+                    72
                 ],
                 "flag": ""
             },
@@ -239,44 +243,62 @@ def create_default_json():
                     1,
                     40
                 ],
-                "flag": True
+                "flag": False
             },
             "power": {
                 "key": [
                     0,
                     35
                 ],
-                "flag": True
+                "flag": False
             }
         },
         "font": {
             "setting": [
-                "迷你简卡通",
+                "楷体",
                 12,
                 "#000000",
                 "bold"
             ],
             "source": [
-                "华文中宋",
-                10,
-                "#ff0000",
+                "Times New Roman",
+                16,
+                "#000000",
                 "normal"
             ],
             "result": [
-                "华文新魏",
-                12,
-                "#ffffff",
+                "楷体",
+                18,
+                "#ff0000",
                 "normal"
             ]
         },
+        "background": {
+            "bg": "background1.png",
+            "bg2": "background2.png",
+            "spr": 0.95
+        },
         "language": "英语",
+        "selected_languages": [
+            "英语",
+            "日语",
+            "繁体中文"
+        ],
         "API_CO": None,
         "Auto": False,
         "start_pause": False,
-        "public_trans": "ali",
-        "input": "cbd",
-        "OCR": "yd",
-        "sourceHide": False
+        "public_trans": "bd",
+        "input": "OCR",
+        "OCR": "local",
+        "sourceHide": False,
+        "ocr_setting": {
+            "mergelines": True,
+            "ocr_auto_method": 0,
+            "ocr_stable_sim": 0.6,
+            "ocr_diff_sim": 0.95,
+            "ocr_interval": 5.0,
+            "ocr_scenes": 0
+        }
     }
 
     with open(setting_path, "w", encoding="utf-8") as file:
@@ -284,8 +306,8 @@ def create_default_json():
 
 
 def global_init():
-    global screenWidth, screenHeight, rectW, rectH, rectX, rectY, hotKey, language, CUDA, hotkey_use, sourceHide, \
-        start_pause, auto, api_co, public_trans, inputSource, OCR, quick_lan,ocr_setting
+    global screenWidth, screenHeight, rectW, rectH, rectX, rectY, hotKey, language, hotkey_use, sourceHide, \
+        start_pause, auto, api_co, public_trans, inputSource, OCR, quick_lan, ocr_setting
     try:
         screenWidth = set_config["User"]["screenwidth"]
         screenHeight = set_config["User"]["screenheight"]
@@ -295,7 +317,6 @@ def global_init():
         rectY = set_config["area"]["y"]
         hotKey = set_config["hotKey"]
         language = set_config["language"]
-        CUDA = set_config["User"]["CUDA"]
         hotkey_use = hotKey["use"]
         api_co = set_config["API_CO"]
         auto = set_config["Auto"]
@@ -308,4 +329,4 @@ def global_init():
         ocr_setting = set_config["ocr_setting"]
     except Exception as error:
         messagebox.showerror("未知错误", "Σ( ° △ °|||)是我没有预料到的错误\n请将运行日志发送给作者！")
-        logging.error(f"打开时出现未知错误: {error}")
+        logging.error(f"变量初始化出现未知错误: {error}")
