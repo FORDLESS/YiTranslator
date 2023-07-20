@@ -6,7 +6,7 @@ import uuid
 from translator.baidu import Tse
 
 
-class QQTranSmart(Tse):
+class Tsa(Tse):
     def __init__(self):
         super().__init__()
         self.host_url = 'https://transmart.qq.com'
@@ -17,7 +17,7 @@ class QQTranSmart(Tse):
         self.api_headers = self.get_headers(self.host_url, if_api=True, if_json_for_api=True)
         self.language_map = {'日语': 'ja', '英语': 'en', '法语': 'fr', '韩语': 'ko', '阿拉伯语': 'ar', '西班牙语': 'es',
                              '俄语': 'ru', '繁体中文': 'zh-tw'}
-        self.session = None
+        self.session = requests.Session()
         self.uuid = str(uuid.uuid4())
         self.query_count = 0
         self.input_limit = int(5e3)
@@ -31,17 +31,13 @@ class QQTranSmart(Tse):
         return [data['text'][index_list[i]: index_list[i + 1]] for i in range(len(index_list) - 1)]
 
     def translate(self, query_text: str, from_language: str = 'auto', to_language: str = 'zh'):
-        if query_text == "" or query_text == "未下载该语言的OCR模型,请从软件主页下载模型解压到files/ocr路径后使用":
-            query_text = ""
+        if query_text == "" or query_text == "未下载该语言的OCR模型,请下载模型后解压到files/ocr路径后使用":
+            return ""
         from_language = self.language_map[from_language]
-        sleep_seconds = 0
-        update_session_after_freq = self.default_session_freq
-        update_session_after_seconds = self.default_session_seconds
 
-        not_update_cond_freq = 1 if self.query_count < update_session_after_freq else 0
-        not_update_cond_time = 1 if time.time() - self.begin_time < update_session_after_seconds else 0
-        if not (self.session and self.language_map and not_update_cond_freq and not_update_cond_time):
-            self.session = requests.Session()
+        not_update_cond_freq = 1 if self.query_count < self.default_session_freq else 0
+        not_update_cond_time = 1 if time.time() - self.begin_time < self.default_session_seconds else 0
+        if not (not_update_cond_freq and not_update_cond_time):
             host_html = self.session.get(self.host_url, headers=self.host_headers, timeout=5).text
 
             if not self.get_lang_url:
@@ -78,11 +74,10 @@ class QQTranSmart(Tse):
         r = self.session.post(self.api_url, json=api_form_data, headers=self.api_headers, timeout=5)
         r.raise_for_status()
         data = r.json()
-        time.sleep(sleep_seconds)
         self.query_count += 1
         return ''.join(data['auto_translation'])
 
 
 if __name__ == '__main__':
-    tx = QQTranSmart()
+    tx = Tsa()
     print(tx.translate("憂郁的臺灣烏龜。", "繁体中文"))

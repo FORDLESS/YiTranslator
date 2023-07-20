@@ -21,7 +21,7 @@ def decrypt(cipher_text):
     return base64.b64decode(_ciphertext).decode()
 
 
-class Caiyun:
+class Tsa:
     def __init__(self):
         self.ss = requests.session()
         self.token = 'token:qgemv4jr1y38jyq6vhvi'
@@ -29,8 +29,8 @@ class Caiyun:
         self.language_map = {'日语': 'ja', '英语': 'en', '法语': 'fr', '韩语': 'ko', '西班牙语': 'es', '俄语': 'ru'}
 
     def translate(self, content, from_lang):
-        if content == "" or content == "未下载该语言的OCR模型,请从软件主页下载模型解压到files/ocr路径后使用":
-            content = ""
+        if content == "" or content == "未下载该语言的OCR模型,请下载模型后解压到files/ocr路径后使用":
+            return ""
         try:
             from_lang = self.language_map[from_lang]
         except KeyError:
@@ -58,10 +58,13 @@ class Caiyun:
             'x-authorization': self.token,
         }
 
-        json_data = {'browser_id': self.bid}
+        json_data = {
+            'browser_id': self.bid,
+        }
         self.ss.options('https://api.interpreter.caiyunai.com/v1/user/jwt/generate', headers=headers, json=json_data)
-        self.jwt = self.ss.post('https://api.interpreter.caiyunai.com/v1/user/jwt/generate', headers=headers,
-                                json=json_data).json()['jwt']
+        self.jwt = \
+            self.ss.post('https://api.interpreter.caiyunai.com/v1/user/jwt/generate', headers=headers,
+                         json=json_data).json()['jwt']
 
         headers['t-authorization'] = self.jwt
         json_data = {
@@ -82,5 +85,5 @@ class Caiyun:
 
 
 if __name__ == '__main__':
-    cy = Caiyun()
+    cy = Tsa()
     print(cy.translate("d.h. keine Variable zeigt darauf", "德语"))

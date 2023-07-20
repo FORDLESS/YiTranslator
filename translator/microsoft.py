@@ -10,7 +10,7 @@ from urllib.parse import quote
 import requests
 
 
-class MS:
+class Tsa:
     def __init__(self):
         self.url = 'api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=zh'
         self.language_map = {'日语': 'ja', '英语': 'en', '法语': 'fr', '韩语': 'ko', '阿拉伯语': 'ar', '西班牙语': 'es',
@@ -36,8 +36,8 @@ class MS:
         return signature
 
     def translate(self, text, from_language=None):
-        if text == "" or text == "未下载该语言的OCR模型,请从软件主页下载模型解压到files/ocr路径后使用":
-            text = ""
+        if text == "" or text == "未下载该语言的OCR模型,请下载模型后解压到files/ocr路径后使用":
+            return ""
         if from_language is not None:
             self.url += '&from={}'.format(self.language_map[from_language])
         headers = {
@@ -45,16 +45,15 @@ class MS:
             'Content-Type': 'application/json'
         }
         json_data = [{"Text": text}]
-        response = requests.post('https://{}'.format(self.url), headers=headers,
-                                 data=json.dumps(json_data).encode('utf-8'))
-
-        response.raise_for_status()
-
-        data_json = response.json()
-        root = data_json[0]['translations'][0]['text']
-        return root
+        try:
+            response = requests.post('https://{}'.format(self.url), headers=headers,data=json.dumps(json_data).encode('utf-8'))
+            data_json = response.json()
+            root = data_json[0]['translations'][0]['text']
+            return root
+        except Exception as e:
+            return e
 
 
 if __name__ == '__main__':
-    ms = MS()
+    ms = Tsa()
     print(ms.translate("language", "英语"))

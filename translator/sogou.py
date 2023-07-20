@@ -25,7 +25,7 @@ def get_form(query_text, from_language):
     return form
 
 
-class Sogou(Tse):
+class Tsa(Tse):
     def __init__(self):
         super().__init__()
         self.host_url = 'https://fanyi.sogou.com'
@@ -39,8 +39,8 @@ class Sogou(Tse):
         self.input_limit = 5000
 
     def translate(self, query_text, from_lang):
-        if query_text == "" or query_text == "未下载该语言的OCR模型,请从软件主页下载模型解压到files/ocr路径后使用":
-            query_text = ""
+        if query_text == "" or query_text == "未下载该语言的OCR模型,请下载模型后解压到files/ocr路径后使用":
+            return ""
         try:
             from_lang = self.language_map[from_lang]
         except KeyError:
@@ -54,6 +54,6 @@ class Sogou(Tse):
 
 
 if __name__ == '__main__':
-    sg = Sogou()
+    sg = Tsa()
     print(sg.translate("大変な数ヶ月です。", "日语"))
 
