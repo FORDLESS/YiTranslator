@@ -1,6 +1,6 @@
 import re
 import time
-import urllib
+import urllib.parse
 import requests
 import json
 
@@ -48,7 +48,7 @@ class Tse:
         return host_headers if not if_api else api_headers
 
 
-class Baidu(Tse):
+class Tsa(Tse):
     def __init__(self):
         super().__init__()
         self.host_url = 'https://fanyi.baidu.com'
@@ -59,7 +59,7 @@ class Baidu(Tse):
         self.api_headers = self.get_headers(self.host_url, if_api=True)
         self.language_map = {'日语': 'jp', '英语': 'en', '法语': 'fra', '韩语': 'kor', '阿拉伯语': 'ara', '西班牙语': 'spa',
                              '俄语': 'ru', '繁体中文': 'cht'}
-        self.session = None
+        self.session = requests.Session()
         self.query_count = 0
         self.input_limit = int(5e3)
 
@@ -71,16 +71,13 @@ class Baidu(Tse):
         :param to_language: str, default 'en'.
         :return: str or dict
         """
-        if query_text == "" or query_text == "未下载该语言的OCR模型,请从软件主页下载模型解压到files/ocr路径后使用":
-            query_text = ""
+        if query_text == "" or query_text == "未下载该语言的OCR模型,请下载模型后解压到files/ocr路径后使用":
+            return ""
         from_language = self.language_map[from_language]
-        update_session_after_freq = self.default_session_freq  # 超过这个次数更新session
-        update_session_after_seconds = self.default_session_seconds  # 超过这个时间更新session
 
-        not_update_cond_freq = 1 if self.query_count < update_session_after_freq else 0
-        not_update_cond_time = 1 if time.time() - self.begin_time < update_session_after_seconds else 0
-        if not (self.session and self.language_map and not_update_cond_freq and not_update_cond_time):
-            self.session = requests.Session()
+        not_update_cond_freq = 1 if self.query_count < self.default_session_freq else 0  # 超过这个次数更新session
+        not_update_cond_time = 1 if time.time() - self.begin_time < self.default_session_seconds else 0  # 超过这个时间更新session
+        if not (not_update_cond_freq and not_update_cond_time):
             _ = self.session.get(self.host_url, headers=self.host_headers, timeout=5)  # must twice, send cookies.
             host_html = self.session.get(self.host_url, headers=self.host_headers, timeout=5).text
 
@@ -96,18 +93,15 @@ class Baidu(Tse):
         r = self.session.post(self.api_url, data=form_data, headers=self.api_headers, timeout=5)
         r.raise_for_status()
         data = r.json()
+        time.sleep(0)
         self.query_count += 1
         try:
             result = '\n'.join([item['dst'] for item in data['data']])
             return result
         except KeyError:
-            result = json.loads(data["result"])
-            content = result['content'][0]["mean"][0]["cont"]
-            texts = list(content.keys())
-            result = ";".join(texts)
-            return result
+            return data["errmsg"]
 
 
 if __name__ == '__main__':
-    bd = Baidu()
+    bd = Tsa()
     print(bd.translate("憂郁的臺灣烏龜。", "繁体中文"))

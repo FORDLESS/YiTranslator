@@ -1,17 +1,17 @@
+import Global
 import logging
 from utils import autoThread
 import tkinter as tk
 from utils.OCRwindow import DraggableWindow
-import Global
 import public
 from utils import winhotkey
 from Global import save_settings, set_config
 from getText.clipboard import Clipboard
 from public import ImageLoader, MyButton, PageButton, BreathingLabel, SwitchButton
-from translator import ali, baidu, tencent, microsoft, caiyun, youdao, sogou,API
+from translator import baseTranslate
 from utils.canvasText import TextCanvas
 from getText.OCRengine import OCR
-
+from set_interface import SetGUI
 
 # noinspection PyAttributeOutsideInit,PyUnusedLocal
 class MainGUI(tk.Tk):
@@ -27,22 +27,11 @@ class MainGUI(tk.Tk):
         self.overrideredirect(True)
 
         self.imageLoader = ImageLoader()
-        self.imageLoader.load_image("sourceOn", "sourceHide.png")
-        self.imageLoader.load_image("sourceOff", "sourceHide_2.png")
-        self.imageLoader.load_image("reTrans", "reTrans.png")
-        self.imageLoader.load_image("minsize_normal", "minsize_1.png")
-        self.imageLoader.load_image("minsize_press", "minsize_2.png")
-        self.imageLoader.load_image("power_normal", "power_1.png")
-        self.imageLoader.load_image("power_press", "power_2.png")
-        self.imageLoader.load_image("switch_manual", "switch_1.png")
-        self.imageLoader.load_image("switch_auto", "switch_2.png")
-        self.imageLoader.load_image("area", "area.png")
-        self.imageLoader.load_image("setting", "setting.png")
-        self.imageLoader.load_image("start", "start.png")
-        self.imageLoader.load_image("pause", "pause.png")
-        self.imageLoader.load_image("invisible", "UI_close.png")
-        self.imageLoader.load_image("visible", "UI_open.png")
-        self.imageLoader.load_image("text_bg", "text_bg.png")
+        try:
+            self.image_load()
+        except Exception as error:
+            logging.error(f"加载图片资源时出现错误: {error}")
+
         set_config["User"]["screenwidth"] = self.screenWidth
         set_config["User"]["screenheight"] = self.screenHeight
         save_settings(Global.setting_path)
@@ -62,9 +51,9 @@ class MainGUI(tk.Tk):
         self.update_font()
 
         self.inputCase = None  # 输入源实例
-        self.tsaCase = None  # 翻译器实例
         self.autoWorker = None
-        self.auto = autoThread.Autowork(self)
+        self.translator = baseTranslate.BaseTsa()  # 翻译器实例
+        self.auto = autoThread.Autowork(self)  # 自动模式线程池
 
         self.frame_init()
         self.interface_init()
@@ -72,10 +61,7 @@ class MainGUI(tk.Tk):
         self.bind_event()
         self.hotkey_init()
 
-        try:
-            self.other_init()
-        except Exception as error:
-            logging.error(f"初始化时出现错误: {error}")
+        self.other_init()
 
         self.textOBJ = TextCanvas(self)  # 用于绘制文本的类实例
 
@@ -160,27 +146,6 @@ class MainGUI(tk.Tk):
             self.inputCase = Clipboard(self)
         elif Global.inputSource == "OCR":
             self.inputCase = OCR()  # OCR实例
-        if Global.api_co:
-            if Global.api_co == "Baidu":
-                self.tsaCase = API.BaiduAPI()
-            elif Global.api_co == "Tencent":
-                self.tsaCase = API.TencentAPI()
-            elif Global.api_co == "TencentImg":
-                self.tsaCase = API.TencentImg()
-        elif Global.public_trans == "ali":
-            self.tsaCase = ali.Ali()
-        elif Global.public_trans == "bd":
-            self.tsaCase = baidu.Baidu()
-        elif Global.public_trans == "tx":
-            self.tsaCase = tencent.QQTranSmart()
-        elif Global.public_trans == "ms":
-            self.tsaCase = microsoft.MS()
-        elif Global.public_trans == "cy":
-            self.tsaCase = caiyun.Caiyun()
-        elif Global.public_trans == "yd":
-            self.tsaCase = youdao.Youdao()
-        elif Global.public_trans == "sg":
-            self.tsaCase = sogou.Sogou()
 
     def textView(self):  # 布置文本
         self.tips = self.text_canvas.create_text(370, 13, text="", font=("微软雅黑", 10, "bold"), fill="black")
@@ -342,8 +307,6 @@ class MainGUI(tk.Tk):
         self.exist_setting = not self.exist_setting
         if self.exist_setting:
             try:
-
-                from set_interface import SetGUI
                 self.settingGUI = SetGUI(self)
                 self.settingGUI.bind("<Destroy>", self.on_setting_closed)
                 self.settingGUI.mainloop()
@@ -386,18 +349,13 @@ class MainGUI(tk.Tk):
 
     def reTrans(self):
         if Global.api_co == "TencentImg":
-            self.source_text,self.result_text = self.tsaCase.translate(Global.language)
-            self.drawText()
-            return
-        if Global.inputSource == "cbd":
-            self.source_text = self.inputCase.gettext()
+            self.source_text,self.result_text = self.translator.get_target("",Global.language)
         else:
-            self.source_text = self.inputCase.runonce()
-        if self.tsaCase:
-            self.result_text = self.tsaCase.translate(self.source_text, Global.language)
-        else:
-            self.drawText("未选择翻译接口")
-            return
+            if Global.inputSource == "cbd":
+                self.source_text = self.inputCase.gettext()
+            else:
+                self.source_text = self.inputCase.runonce()
+            self.result_text = self.translator.get_target(self.source_text, Global.language)
         self.drawText()
 
     def autoTrans(self):
@@ -433,6 +391,24 @@ class MainGUI(tk.Tk):
     def result(self):
         self.clipboard_clear()
         self.clipboard_append(self.result_text)
+
+    def image_load(self):
+        self.imageLoader.load_image("sourceOn", "sourceHide.png")
+        self.imageLoader.load_image("sourceOff", "sourceHide_2.png")
+        self.imageLoader.load_image("reTrans", "reTrans.png")
+        self.imageLoader.load_image("minsize_normal", "minsize_1.png")
+        self.imageLoader.load_image("minsize_press", "minsize_2.png")
+        self.imageLoader.load_image("power_normal", "power_1.png")
+        self.imageLoader.load_image("power_press", "power_2.png")
+        self.imageLoader.load_image("switch_manual", "switch_1.png")
+        self.imageLoader.load_image("switch_auto", "switch_2.png")
+        self.imageLoader.load_image("area", "area.png")
+        self.imageLoader.load_image("setting", "setting.png")
+        self.imageLoader.load_image("start", "start.png")
+        self.imageLoader.load_image("pause", "pause.png")
+        self.imageLoader.load_image("invisible", "UI_close.png")
+        self.imageLoader.load_image("visible", "UI_open.png")
+        self.imageLoader.load_image("text_bg", "text_bg.png")
 
 
 def start():

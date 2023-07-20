@@ -7,7 +7,7 @@ class BaseTSA:
     pass
 
 
-class Ali(BaseTSA):
+class Tsa(BaseTSA):
     def __init__(self):
 
         self.ss = requests.session()
@@ -42,8 +42,8 @@ class Ali(BaseTSA):
                              '繁体中文': 'zh-tw'}
 
     def translate(self, content, lang):
-        if content == "" or content == "未下载该语言的OCR模型,请从软件主页下载模型解压到files/ocr路径后使用":
-            content = ""
+        if content == "" or content == "未下载该语言的OCR模型,请下载模型后解压到files/ocr路径后使用":
+            return ""
         lang = self.language_map[lang]
         form_data = {
             "srcLang": lang,
@@ -70,5 +70,5 @@ class Ali(BaseTSA):
 
 
 if __name__ == '__main__':
-    ali = Ali()
+    ali = Tsa()
     print(ali.translate("تحقق", "阿拉伯语"))

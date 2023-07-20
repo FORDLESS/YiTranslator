@@ -11,7 +11,7 @@ def getSign(useragent, content):
     return {'ts': r, 'bv': t, 'salt': i, 'sign': hashlib.md5(
         bytes("fanyideskweb" + str(content) + str(i) + "Ygy_4c=r#e#4EX^NUGUc5", encoding='utf-8')).hexdigest()}
 
-class Youdao:
+class Tsa:
     def __init__(self):
         self.language_map = {'日语': 'ja', '英语': 'en', '法语': 'fr', '韩语': 'ko', '阿拉伯语': 'ar', '西班牙语': 'es',
                              '俄语': 'ru'}
@@ -40,8 +40,8 @@ class Youdao:
 
 
     def translate(self, content, from_lang):
-        if content == "" or content == "未下载该语言的OCR模型,请从软件主页下载模型解压到files/ocr路径后使用":
-            content = ""
+        if content == "" or content == "未下载该语言的OCR模型,请下载模型后解压到files/ocr路径后使用":
+            return ""
         try:
             from_lang = self.language_map[from_lang]
         except KeyError:
@@ -82,5 +82,5 @@ class Youdao:
 
 
 if __name__ == '__main__':
-    yd = Youdao()
+    yd = Tsa()
     print(yd.translate("힘든 몇 달입니다.。", "韩语"))

@@ -1,4 +1,3 @@
-import logging
 import tkinter as tk
 from tkinter import messagebox, colorchooser, filedialog
 from tkinter import ttk
@@ -9,7 +8,6 @@ from Global import save_settings, set_config
 from getText.OCRengine import OCR
 from public import ImageLoader, MyButton, PageButton, SwitchButton
 from getText.clipboard import Clipboard
-from translator import ali, baidu, tencent, microsoft, caiyun, youdao, sogou,API
 
 
 # noinspection PyAttributeOutsideInit
@@ -506,7 +504,8 @@ class SetGUI(tk.Toplevel):
 
         # OCR_page_show
         self.OCR_page_label = tk.Label(self.bg_label, image=self.imageLoader.get_image("bg2"), compound="center", bd=0)
-        OCR_label_1 = tk.Label(self.OCR_page_label, text="如使用本地OCR时发现CPU占用过高可适当调小扫描区域或者降低扫描频率", font=self.font12, fg="#33ccff")
+        OCR_label_1 = tk.Label(self.OCR_page_label, text="如使用本地OCR时发现CPU占用过高可适当调小扫描区域或者降低扫描频率", font=self.font12,
+                               fg="#33ccff")
         OCR_label_local = tk.Label(self.OCR_page_label, text="本地OCR", font=self.font12, fg=self.fontColor)
         OCR_label_yd = tk.Label(self.OCR_page_label, text="有道OCR", font=self.font12, fg=self.fontColor)
         OCR_label_2 = tk.Label(self.OCR_page_label, text="是否合并多行文本", font=self.font12, fg=self.fontColor)
@@ -531,15 +530,19 @@ class SetGUI(tk.Toplevel):
                                                values=["分析图像更新", "周期执行", "分析图像更新+周期执行"], width=15)
         self.autoRules_combobox.current(set_config["ocr_setting"]["ocr_auto_method"])
         self.autoRules_combobox.bind("<<ComboboxSelected>>", self.select_rules)
-        self.OCR_spin_interval = ttk.Spinbox(self.OCR_page_label, from_=0, to_=30, increment=0.1, command=self.set_interval
-                                             , textvariable=self.inter_val, state="readonly", wrap=True, style='Custom.TSpinbox',
+        self.OCR_spin_interval = ttk.Spinbox(self.OCR_page_label, from_=0, to_=30, increment=0.1,
+                                             command=self.set_interval
+                                             , textvariable=self.inter_val, state="readonly", wrap=True,
+                                             style='Custom.TSpinbox',
                                              width=10)
         self.inter_val.set(Global.ocr_setting["ocr_interval"])
-        self.OCR_spin_sim = ttk.Spinbox(self.OCR_page_label, from_=0, to_=1, increment=0.01, command=self.set_sim, width=10
-                                        , textvariable=self.sim_val, state="readonly", wrap=True, style='Custom.TSpinbox')
+        self.OCR_spin_sim = ttk.Spinbox(self.OCR_page_label, from_=0, to_=1, increment=0.01, command=self.set_sim,
+                                        width=10
+                                        , textvariable=self.sim_val, state="readonly", wrap=True,
+                                        style='Custom.TSpinbox')
         self.sim_val.set(Global.ocr_setting["ocr_diff_sim"])
         self.scenes_combobox = ttk.Combobox(self.OCR_page_label, state='readonly', style="Custom.TCombobox",
-                                               values=["    静态", "    动态"], width=8)
+                                            values=["    静态", "    动态"], width=8)
         self.scenes_combobox.current(set_config["ocr_setting"]["ocr_scenes"])
         self.scenes_combobox.bind("<<ComboboxSelected>>", self.select_scenes)
         OCR_label_1.place(x=20, y=25)
@@ -557,7 +560,7 @@ class SetGUI(tk.Toplevel):
         self.autoRules_combobox.place(x=300, y=155)
         self.OCR_spin_interval.place(x=300, y=190)
         self.OCR_spin_sim.place(x=300, y=225)
-        self.scenes_combobox.place(x=300,y=260)
+        self.scenes_combobox.place(x=300, y=260)
 
         # language_page_show
         self.language_page_label = tk.Label(self.bg_label, image=self.imageLoader.get_image("bg2"), compound="center",
@@ -834,10 +837,8 @@ class SetGUI(tk.Toplevel):
     def baiduSwitch(self):
         if self.personal_baidu_button.switch:
             set_config["API_CO"] = "Baidu"
-            self.main_gui.tsaCase = API.BaiduAPI()
         else:
             set_config["API_CO"] = None
-            self.publicSwitch()
         save_settings(Global.setting_path)
         public.update_global()
         print(Global.api_co)
@@ -845,10 +846,8 @@ class SetGUI(tk.Toplevel):
     def tencentSwitch(self):
         if self.personal_tencent_button.switch:
             set_config["API_CO"] = "Tencent"
-            self.main_gui.tsaCase = API.TencentAPI()
         else:
             set_config["API_CO"] = None
-            self.publicSwitch()  # 主动关闭私人API时开启公共API
         save_settings(Global.setting_path)
         public.update_global()
         print(Global.api_co)
@@ -856,48 +855,34 @@ class SetGUI(tk.Toplevel):
     def tencentImg_switch(self):
         if self.personal_tencentImg_button.switch:
             set_config["API_CO"] = "TencentImg"
-            self.main_gui.tsaCase = API.TencentImg()
         else:
             set_config["API_CO"] = None
-            self.publicSwitch()
         save_settings(Global.setting_path)
         public.update_global()
         print(Global.api_co)
 
     def publicSwitch(self):
-        try:
-            if self.public_button_bd.switch:
-                set_config["public_trans"] = "bd"
-                self.main_gui.tsaCase = baidu.Baidu()
-            elif self.public_button_tx.switch:
-                set_config["public_trans"] = "tx"
-                self.main_gui.tsaCase = tencent.QQTranSmart()
-            elif self.public_button_ali.switch:
-                set_config["public_trans"] = "ali"
-                self.main_gui.tsaCase = ali.Ali()
-            elif self.public_button_ms.switch:
-                set_config["public_trans"] = "ms"
-                self.main_gui.tsaCase = microsoft.MS()
-            elif self.public_button_gg.switch:
-                set_config["public_trans"] = "gg"
-            elif self.public_button_cy.switch:
-                set_config["public_trans"] = "cy"
-                self.main_gui.tsaCase = caiyun.Caiyun()
-            elif self.public_button_sg.switch:
-                set_config["public_trans"] = "sg"
-                self.main_gui.tsaCase = sogou.Sogou()
-            elif self.public_button_yd.switch:
-                set_config["public_trans"] = "yd"
-                self.main_gui.tsaCase = youdao.Youdao()
-            else:
-                set_config["public_trans"] = None
-                self.main_gui.tsaCase = None
-        except Exception as error:
-            logging.error(f"切换翻译接口时出现错误，该错误常由网络原因引起: {error}")
-        finally:
-            save_settings(Global.setting_path)
-            public.update_global()
-            print(Global.public_trans)
+        if self.public_button_bd.switch:
+            set_config["public_trans"] = "bd"
+        elif self.public_button_tx.switch:
+            set_config["public_trans"] = "tx"
+        elif self.public_button_ali.switch:
+            set_config["public_trans"] = "ali"
+        elif self.public_button_ms.switch:
+            set_config["public_trans"] = "ms"
+        elif self.public_button_gg.switch:
+            set_config["public_trans"] = "gg"
+        elif self.public_button_cy.switch:
+            set_config["public_trans"] = "cy"
+        elif self.public_button_sg.switch:
+            set_config["public_trans"] = "sg"
+        elif self.public_button_yd.switch:
+            set_config["public_trans"] = "yd"
+        else:
+            set_config["public_trans"] = None
+        save_settings(Global.setting_path)
+        public.update_global()
+        print(Global.public_trans)
 
     def inputSwitch(self):
         if self.input_button_clipboard.switch:
@@ -961,8 +946,6 @@ class SetGUI(tk.Toplevel):
         self.focus()
         self.main_gui.update_lan_label(Global.language[0])
         print(Global.language)
-
-
 
     def hotkeyUsable(self):  # 全局热键启停
         if self.hotkey_button_usable.switch:
