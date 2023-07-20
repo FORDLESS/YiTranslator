@@ -2,8 +2,6 @@
 
 > **一款简单的翻译器**
 
-## <a href="http://hillya51.github.io/" target="_blank">使用说明</a> 
- 
 
 ## 功能支持
 
