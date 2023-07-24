@@ -1,4 +1,5 @@
 import importlib
+import os
 import time
 from difflib import SequenceMatcher
 import Global
@@ -32,7 +33,7 @@ class OCR:
         self.ocr_engine = None
         self.timestamp = time.time()
         self.sec = mss.mss()
-        self.runonce()
+        #self.runonce()
 
     def imageCut(self, x1, y1, x2, y2):  # 截图返回Image对象
         if x2 > x1 and y2 > y1:
@@ -42,7 +43,7 @@ class OCR:
         else:
             return None
 
-    def gettext1(self) -> str:  # 也许下面的方法更好
+    def gettext1(self) -> str:  # 面对动态视频表现较好
         time.sleep(0.01)
         with mss.mss() as sct:
             rect = (Global.rectX, Global.rectY, Global.rectX + Global.rectW, Global.rectY + Global.rectH)
@@ -104,39 +105,56 @@ class OCR:
             return "no scope"
 
         ok = True
+        done = True  # 在使用变化+时间扫描时的标记
         if Global.ocr_setting["ocr_auto_method"] in [0, 2]:
             img_np = image2np(grab_img)
-            if self.last_img is not None and (img_np.shape == self.last_img.shape):
-                stable_score = compareImage(img_np, self.last_img)
-            else:
-                stable_score = 0
-            self.last_img = img_np
-            if stable_score >= Global.ocr_setting['ocr_stable_sim']:
-                if self.last_rec_img is not None and (img_np.shape == self.last_rec_img.shape):
-                    sim_score = compareImage(img_np, self.last_rec_img)
+            if Global.ocr_setting["ocr_scenes"]:  # 动态，不需要stable
+                if self.last_img is not None and (img_np.shape == self.last_img.shape):
+                    sim_score = compareImage(img_np, self.last_img)
                 else:
                     sim_score = 0
-                if sim_score > Global.ocr_setting['ocr_diff_sim']:  # 如果相似度分数高于预设图像一致性值
-                    ok = False  # 说明图片高度相似，无需OCR扫描
+                self.last_img = img_np
+                if sim_score <= Global.ocr_setting['ocr_diff_sim']:
+                    self.last_rec_img = img_np
                 else:
-                    self.last_rec_img = img_np  # 否则该图片被保存为最后识别图像，等待扫描
-            else:
-                ok = False
-        if Global.ocr_setting['ocr_auto_method'] in [1, 2]:
+                    ok = False
+                    done = False
+            else:  # 对静态文本表现较好（排除了滚动文本时的干扰）
+                if self.last_img is not None and (img_np.shape == self.last_img.shape):
+                    stable_score = compareImage(img_np, self.last_img)
+                else:
+                    stable_score = 0
+                self.last_img = img_np
+                if stable_score >= Global.ocr_setting['ocr_stable_sim']:
+                    if self.last_rec_img is not None and (img_np.shape == self.last_rec_img.shape):
+                        sim_score = compareImage(img_np, self.last_rec_img)
+                    else:
+                        sim_score = 0
+                    if sim_score > Global.ocr_setting['ocr_diff_sim']:
+                        ok = False
+                        done = False
+                    else:
+                        self.last_rec_img = img_np
+                else:
+                    ok = False
+                    done = False
+        else:
+            done = False
+
+        if Global.ocr_setting['ocr_auto_method'] in [1, 2] and not done:
             if time.time() - self.last_ocr_time > Global.ocr_setting['ocr_interval']:
-                # If the elapsed time exceeds the set interval
                 ok = True
-                self.last_ocr_time = time.time()  # update last scan time
+
             else:
                 ok = False
-        if not ok:  # If no OCR scanning is performed, return ""
+        if not ok:
             return ""
-        text = self.runOCR(grab_img)  # Execute the OCR scanning function and return the text
-        # If the saved text is not empty, compare the text similarity
+        self.last_ocr_time = time.time()
+        text = self.runOCR(grab_img)
         if self.last_text is not None:
             sim = getEqualRate(self.last_text, text)
             if sim > 0.95:
-                return ""  # Return the "" to avoid repeated translation
+                return ""
         self.last_text = text
         return text
 
@@ -155,9 +173,11 @@ class OCR:
 
     def runOCR(self, img):
         # 判断使用的是哪个OCR引擎并且确定是否存在
-        if Global.OCR is None:
-            return None
-        fname = f'{Global.BASE_DIR}/.cache/ocr/{self.timestamp}.png'  # 以时间戳命名图片名称缓存在指定文件夹
+        if not os.path.exists(f"{Global.parent_dir}/.cache"):
+            os.mkdir(f"{Global.parent_dir}/.cache")
+        if not os.path.exists(f"{Global.parent_dir}/.cache/ocr"):
+            os.mkdir(f"{Global.parent_dir}/.cache/ocr")
+        fname = f'{Global.parent_dir}/.cache/ocr/{self.timestamp}.png'  # 以时间戳命名图片名称缓存在指定文件夹
         img.save(fname)
         if self.now_use_ocr == "local" and Global.OCR != "local":  # 判断当前使用的OCR引擎是否为本地OCR
             try:
