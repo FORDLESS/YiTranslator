@@ -2,16 +2,17 @@ import Global
 import logging
 from utils import autoThread
 import tkinter as tk
+from tkinter import messagebox
 from utils.OCRwindow import DraggableWindow
-import public
+from utils import public
 from utils import winhotkey
 from Global import save_settings, set_config
 from getText.clipboard import Clipboard
-from public import ImageLoader, MyButton, PageButton, BreathingLabel, SwitchButton
+from utils.public import ImageLoader, MyButton, PageButton, BreathingLabel, SwitchButton
 from translator import baseTranslate
 from utils.canvasText import TextCanvas
 from getText.OCRengine import OCR
-from set_interface import SetGUI
+from gui.set_interface import SetGUI
 
 # noinspection PyAttributeOutsideInit,PyUnusedLocal
 class MainGUI(tk.Tk):
@@ -43,7 +44,7 @@ class MainGUI(tk.Tk):
         self.exist_setting = False  # 是否存在设置界面
         self.visible = True
         self.area = None
-        self.quick_index = 0
+        self.quick_index = 1
 
         self.source_text = None
         self.result_text = None
@@ -67,6 +68,8 @@ class MainGUI(tk.Tk):
 
         if Global.auto:
             self.autoTrans()
+
+        public.clear_folder(Global.BASE_DIR + "/.cache/ocr", set_config["limit_size"])
 
     def bind_event(self):
         self.bind("<ButtonPress-1>", self.start_drag)
@@ -166,7 +169,7 @@ class MainGUI(tk.Tk):
         self.geometry(f"+{x}+{y}")
 
     def stop_drag(self, event):
-        if self._drag_data is not None:
+        if hasattr(self, '_drag_data'):
             self._drag_data = None
 
     def minsize(self):  # 最小化需要先恢复成普通窗体
@@ -228,7 +231,6 @@ class MainGUI(tk.Tk):
             self.text_canvas.unbind("<Enter>")
             self.text_canvas.unbind("<Leave>")
             self.function_frame.unbind("<Leave>")
-        print(self.visibility_button.switch)
 
     def reset_timer(self):
         if self.win_timer:
@@ -257,7 +259,6 @@ class MainGUI(tk.Tk):
             self.autoTrans()
         save_settings(Global.setting_path)
         public.update_global()
-        print(Global.auto)
 
     def start_pause(self):
         if Global.b_flag:  # 如果是热键触发的函数
@@ -322,6 +323,9 @@ class MainGUI(tk.Tk):
         self.lan_label.config(text=new_lan)
 
     def quick_switch_lan(self, event):
+        if Global.auto and Global.start_pause:  # 禁止扫描中切换，以免崩溃
+            messagebox.showinfo("无法切换","切换前请先停止扫描\n以免造成进程混乱")
+            return
         try:
             Global.language = Global.quick_lan[self.quick_index]
         except IndexError:  # 中途更改快速语言列表导致越界的处理
