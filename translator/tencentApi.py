@@ -8,7 +8,7 @@ import time
 from urllib.parse import quote
 import requests
 
-import public
+from utils import public
 
 
 def get_string_to_sign(method, endpoint, params):

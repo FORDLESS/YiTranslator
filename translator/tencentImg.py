@@ -10,7 +10,7 @@ from PIL import Image
 import Global
 from datetime import datetime
 
-import public
+from utils import public
 
 
 def sign(key, msg):

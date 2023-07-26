@@ -1,8 +1,7 @@
 import re
 import time
-import urllib.parse
+from urllib import parse
 import requests
-import json
 
 
 class Tse:
@@ -24,7 +23,7 @@ class Tse:
 
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) " \
                      "Chrome/107.0.0.0 Safari/537.36 "
-        url_path = urllib.parse.urlparse(host_url).path
+        url_path = parse.urlparse(host_url).path
         host_headers = {
             'Referer' if if_referer_for_host else 'Host': host_url,
             "User-Agent": user_agent,

@@ -2,10 +2,10 @@ import hashlib
 import json
 import logging
 import random
-import urllib.parse
+from urllib import parse
 from http import client
 import Global
-import public
+from utils import public
 
 
 class Tsa:
@@ -24,7 +24,7 @@ class Tsa:
         salt = random.randint(16384, 65536)
         sign_str = self.uuid + text + str(salt) + self.key
         sign_hex = hashlib.md5(sign_str.encode()).hexdigest()
-        my_url = self.endpoint + '?appid=' + self.uuid + '&q=' + urllib.parse.quote(
+        my_url = self.endpoint + '?appid=' + self.uuid + '&q=' + parse.quote(
             text) + '&from=' + fromLang + '&to=' + self.toLang + '&salt=' + str(
             salt) + '&sign=' + sign_hex
 
