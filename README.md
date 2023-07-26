@@ -33,8 +33,6 @@
 <details>
 <summary>点击查看</summary>
 
-* [HIllya51/LunaTranslator](https://github.com/HIllya51/LunaTranslator)
-
 * [PaddlePaddle/PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR)
   
 * [UlionTse/translators](https://github.com/UlionTse/translators)
