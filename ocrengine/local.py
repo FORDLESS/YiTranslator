@@ -14,7 +14,7 @@ class OCRwrapper:  # OCR装饰器
             bit = '64'
         else:
             bit = '32'
-        self.dll = CDLL(os.path.abspath(f'{Global.BASE_DIR}/files/plugins/ocr{bit}.dll'))
+        self.dll = CDLL(os.path.abspath(f'{Global.parent_dir}/files/plugins/ocr{bit}.dll'))
 
     def _OcrInit(self, szDetModel, szRecModel, szKeyPath, szClsModel='', nThreads=4):  # 初始化OCR实例-隐
         _OcrInit = self.dll.OcrInit
@@ -79,7 +79,7 @@ class OCR(BaseOCR):  # 这个类继承于baseocr，self._ocr来自ocrwrapper
             return True
         self._ocr.trydestroy()  # 否则先销毁已创建的OCR引擎
 
-        path = f'{Global.BASE_DIR}/files/ocr/{self.srclang}'  # 对应语种的路劲文件夹下
+        path = f'{Global.parent_dir}/files/ocr/{self.srclang}'  # 对应语种的路劲文件夹下
         if not (os.path.exists(f'{path}/det.onnx') and os.path.exists(f'{path}/rec.onnx') and os.path.exists(
                 f'{path}/dict.txt')):  # 如果不存在所需的模型文件
             return False
@@ -89,7 +89,7 @@ class OCR(BaseOCR):  # 这个类继承于baseocr，self._ocr来自ocrwrapper
 
     def ocr(self, imgfile):
         if not self.checkChange():  # 扫描前检查是否变更语种并且是否存在对应语言的识别模型，不存在则将提示作为扫描内容返回
-            return '未下载该语言的OCR模型,请从软件主页下载模型解压到files/ocr路径后使用'
+            return '未下载该语言的OCR模型,请下载模型后解压到files/ocr路径后使用'
         # 得到初始的识别文本
         s = self._ocr.ocr(os.path.dirname(imgfile) + '/', os.path.basename(imgfile), 0)
         vertical = False  # 是否竖排

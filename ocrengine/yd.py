@@ -3,6 +3,7 @@ import base64
 from ocrengine.baseOCR import BaseOCR
 import Global
 
+
 class OCR(BaseOCR):
     def ocr(self, imgfile):
         headers = {

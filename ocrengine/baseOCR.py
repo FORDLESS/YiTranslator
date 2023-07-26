@@ -1,5 +1,4 @@
 import Global
-import logging
 
 
 class BaseOCR:
