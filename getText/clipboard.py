@@ -1,7 +1,5 @@
 import tkinter as tk
 
-import Global
-
 
 class Clipboard:
     copy_content = None
@@ -20,9 +18,8 @@ class Clipboard:
             pass
 
     def gettext(self):
-        #Global.getsourceRunning = False
-        Global.sourceText = self.copy_content
         return self.copy_content
+
 
 
 if __name__ == '__main__':

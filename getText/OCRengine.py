@@ -144,7 +144,6 @@ class OCR:
         if Global.ocr_setting['ocr_auto_method'] in [1, 2] and not done:
             if time.time() - self.last_ocr_time > Global.ocr_setting['ocr_interval']:
                 ok = True
-
             else:
                 ok = False
         if not ok:
