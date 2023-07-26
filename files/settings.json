@@ -13,13 +13,16 @@
         "secretKey": ""
     },
     "area": {
-        "x": 956,
-        "y": 693,
-        "width": 341,
-        "height": 48,
+        "x": 513,
+        "y": 577,
+        "width": 159,
+        "height": 46,
         "transparency": 0.5,
         "color": "#28283e",
-        "transparent": false
+        "transparent": false,
+        "bg_color": "#28283e",
+        "bdwidth": 0,
+        "bd_color": "red"
     },
     "hotKey": {
         "use": true,
@@ -96,40 +99,42 @@
         ],
         "source": [
             "Times New Roman",
-            16,
-            "#ff00ff",
+            14,
+            "#000000",
             "normal"
         ],
         "result": [
             "楷体",
             18,
-            "#000000",
+            "#ff0000",
             "normal"
         ]
     },
     "background": {
         "bg": "background1.png",
         "bg2": "background2.png",
-        "spr": 0.95
+        "spr": 0.92
     },
-    "language": "俄语",
+    "language": "英语",
     "selected_languages": [
         "英语",
         "日语",
         "繁体中文"
     ],
     "API_CO": null,
-    "Auto": false,
+    "Auto": true,
     "start_pause": false,
-    "public_trans": "ali",
+    "public_trans": "bd",
     "input": "OCR",
     "OCR": "local",
     "sourceHide": false,
+    "limit_size": 10,
     "ocr_setting": {
         "mergelines": false,
         "ocr_auto_method": 0,
-        "ocr_stable_sim": 0.7,
+        "ocr_stable_sim": 0.6,
         "ocr_diff_sim": 0.95,
-        "ocr_interval": 5.0
+        "ocr_interval": 5.0,
+        "ocr_scenes": 0
     }
 }
