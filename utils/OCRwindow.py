@@ -1,22 +1,24 @@
 import tkinter as tk
 from tkinter import ttk
 import Global
-import public
+from utils import public
 
 
 class DraggableWindow:
-    def __init__(self,parent):
+    def __init__(self, parent):
         alpha = Global.set_config["area"]["transparency"]
-        color = Global.set_config["area"]["color"]
+        bg_color = Global.set_config["area"]["bg_color"]
+        bd_width = Global.set_config["area"]["bdwidth"]
+        bd_color = Global.set_config["area"]["bd_color"]
         self.root = tk.Toplevel(parent)
         self.root.geometry(f"{Global.rectW}x{Global.rectH}+{Global.rectX}+{Global.rectY}")
         self.root.overrideredirect(True)
         self.root.wm_attributes("-topmost", True, "-alpha", alpha)
         if Global.set_config["area"]["transparent"]:
-            self.root.wm_attributes("-transparentcolor", color)
+            self.root.wm_attributes("-transparentcolor", bg_color)
         self.root.config(bg='#f0f0f0')
 
-        self.frame = tk.Frame(self.root, bg=color,bd=3, relief="solid")
+        self.frame = tk.Frame(self.root, bg=bg_color, highlightthickness=bd_width, highlightbackground=bd_color)
         self.frame.pack(expand=True, fill="both")
 
         self.resize_handle = ttk.Sizegrip(self.frame)
@@ -54,7 +56,6 @@ class DraggableWindow:
 
     def destroy(self):
         self.root.destroy()
-
 
 
 if __name__ == '__main__':

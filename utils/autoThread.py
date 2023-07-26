@@ -26,7 +26,7 @@ class Autowork:
 
     def get_result(self):
         Global.getresultRunning = True
-        self.result = self.root.tsaCase.translate(self.root.source_text, Global.language)
+        self.result = self.root.translator.get_target(self.root.source_text, Global.language)
         Global.getresultRunning = False
 
     def getSource(self):
