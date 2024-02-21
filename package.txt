@@ -1,0 +1,4 @@
+nuitka --standalone --show-memory --show-progress --windows-disable-console --include-plugin-directory=translator,ocrengine --nofollow-imports --plugin-enable=tk-inter --follow-import-to=utils --output-dir=output --windows-icon-from-ico=./icon.ico YiTse.py
+
+
+--windows-company-name="None" --windows-product-name="YiTse" --windows-product-version=1.0 --windows-file-version=1.0 --windows-file-description="for win10 1080P only" --copyright="Copyright @2023 Yisay"
