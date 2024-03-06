@@ -1187,7 +1187,7 @@ def bg_default():
 
 
 def download_model():
-    webbrowser.open("https://github.com/FORDLESS/YiTranslator/releases/tag/v1.0")
+    webbrowser.open("https://github.com/Jotalz/YiTranslator/releases/tag/v1.0.0")
 
 
 def start():

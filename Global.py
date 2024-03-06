@@ -27,8 +27,29 @@ getresultRunning = False
 getsourceRunning = False
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(BASE_DIR)
 setting_path = os.path.join(BASE_DIR, "files", "settings.json")
 
+urls = ["https://fanyi.baidu.com",
+        "https://transmart.qq.com",
+        "https://translate.alibaba.com",
+        "https://api.cognitive.microsofttranslator.com",
+        "https://translate.google.com",
+        "https://fanyi.caiyunapp.com",
+        "https://fanyi.sogou.com",
+        "https://fanyi.youdao.com"]
+
+url_names = {
+    "https://fanyi.baidu.com": "百度",
+    "https://transmart.qq.com": "腾讯",
+    "https://translate.alibaba.com": "阿里",
+    "https://api.cognitive.microsofttranslator.com": "微软",
+    "https://translate.google.com": "谷歌",
+    "https://fanyi.caiyunapp.com": "彩云",
+    "https://fanyi.sogou.com": "搜狗",
+    "https://fanyi.youdao.com": "有道"
+}
+pdd = {"百度":"--","腾讯":"--","阿里":"--","微软":"--","谷歌":"--","彩云":"--","搜狗":"--","有道":"--"}
 Baidu_ERROR_map = {"52001": "请求超时，请检查网络连接", "52002": "系统错误，百度抽风，请重试", "52003": " 请检查id是否正确或者服务是否开通",
                    "54000": "必填参数为空，不应该出现的错误，请联系作者", "54001": "签名错误，请联系作者", "54003": "访问频率过高，请稍后重试",
                    "54004": "账户免费额度用尽，建议换个接口", "54005": "超长文本频繁请求，请稍后重试", "58000": "客户端IP非法，"
