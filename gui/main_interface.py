@@ -14,6 +14,7 @@ from utils.canvasText import TextCanvas
 from getText.OCRengine import OCR
 from gui.set_interface import SetGUI
 
+
 # noinspection PyAttributeOutsideInit,PyUnusedLocal
 class MainGUI(tk.Tk):
     def __init__(self):
@@ -85,6 +86,14 @@ class MainGUI(tk.Tk):
         self.text_canvas.pack()
 
     def interface_init(self):
+        self.copySource_button = MyButton(self.function_frame, bg="#99ffcc", hover_bg="#80ffbf", command=self.source,
+                                          normal_image=self.imageLoader.get_image("copyS"),
+                                          activebackground="#99ffcc", tooltip=["复制原文", "black", "white"])
+        self.copySource_button.place(relx=0.10, rely=0.01)
+        self.copyResult_button = MyButton(self.function_frame, bg="#99ffcc", hover_bg="#80ffbf", command=self.result,
+                                          normal_image=self.imageLoader.get_image("copyR"),
+                                          activebackground="#99ffcc", tooltip=["复制译文", "black", "white"])
+        self.copyResult_button.place(relx=0.15, rely=0.01)
         self.sourceHide_button = SwitchButton(self.function_frame, bg="#99ffcc", command=self.sourceHide,
                                               hover_bg="#80ffbf", tooltip=["显示/隐藏原文", "black", "white"],
                                               switch=Global.sourceHide, activebackground="#99ffcc",
@@ -324,7 +333,7 @@ class MainGUI(tk.Tk):
 
     def quick_switch_lan(self, event):
         if Global.auto and Global.start_pause:  # 禁止扫描中切换，以免崩溃
-            messagebox.showinfo("无法切换","切换前请先停止扫描\n以免造成进程混乱")
+            messagebox.showinfo("无法切换", "切换前请先停止扫描\n以免造成进程混乱")
             return
         try:
             Global.language = Global.quick_lan[self.quick_index]
@@ -353,7 +362,7 @@ class MainGUI(tk.Tk):
 
     def reTrans(self):
         if Global.api_co == "TencentImg":
-            self.source_text,self.result_text = self.translator.get_target("",Global.language)
+            self.source_text, self.result_text = self.translator.get_target("", Global.language)
         else:
             if Global.inputSource == "cbd":
                 self.source_text = self.inputCase.gettext()
@@ -365,18 +374,18 @@ class MainGUI(tk.Tk):
     def autoTrans(self):
         if Global.auto:
             if Global.start_pause:
-                self.auto.start_source_task()               # 只要没有暂停就一直扫描
-                if not Global.getsourceRunning:             # 扫描完成时获取原文本否则文本为”“
+                self.auto.start_source_task()  # 只要没有暂停就一直扫描
+                if not Global.getsourceRunning:  # 扫描完成时获取原文本否则文本为”“
                     self.source_text = self.auto.source if self.text_cache[0] != self.auto.source else ""
                 else:
                     self.source_text = ""
-                if self.source_text != "":                  # 如果不为”“才进入翻译分支，减少对翻译api的调用
-                    self.text_cache[0] = self.source_text   # 不为""时为有效原文本，将其保存在缓存列表中
-                    self.auto.start_result_task()           # 启动翻译任务
-                if not Global.getresultRunning:             # 翻译完成时获取译文，并将译文保存至缓存列表
+                if self.source_text != "":  # 如果不为”“才进入翻译分支，减少对翻译api的调用
+                    self.text_cache[0] = self.source_text  # 不为""时为有效原文本，将其保存在缓存列表中
+                    self.auto.start_result_task()  # 启动翻译任务
+                if not Global.getresultRunning:  # 翻译完成时获取译文，并将译文保存至缓存列表
                     self.result_text = self.auto.getResult()
                     self.text_cache[1] = self.result_text
-                self.source_text = self.text_cache[0]       # 将原文和译文从缓存列表中读出赋值给将要绘制的文本
+                self.source_text = self.text_cache[0]  # 将原文和译文从缓存列表中读出赋值给将要绘制的文本
                 self.result_text = self.text_cache[1]
 
                 self.drawText()
@@ -399,6 +408,8 @@ class MainGUI(tk.Tk):
     def image_load(self):
         self.imageLoader.load_image("sourceOn", "sourceHide.png")
         self.imageLoader.load_image("sourceOff", "sourceHide_2.png")
+        self.imageLoader.load_image("copyS", "copySource.png")
+        self.imageLoader.load_image("copyR", "copyResult.png")
         self.imageLoader.load_image("reTrans", "reTrans.png")
         self.imageLoader.load_image("minsize_normal", "minsize_1.png")
         self.imageLoader.load_image("minsize_press", "minsize_2.png")
