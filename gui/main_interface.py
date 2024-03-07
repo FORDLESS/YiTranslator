@@ -69,7 +69,7 @@ class MainGUI(tk.Tk):
         if Global.auto:
             self.autoTrans()
 
-        public.clear_folder(Global.BASE_DIR + "/.cache/ocr", set_config["limit_size"])
+        public.clear_folder(Global.parent_dir + "/.cache/ocr", set_config["limit_size"])
 
     def bind_event(self):
         self.bind("<ButtonPress-1>", self.start_drag)

@@ -28,7 +28,8 @@ getsourceRunning = False
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(BASE_DIR)
-setting_path = os.path.join(BASE_DIR, "files", "settings.json")
+#print(BASE_DIR,parent_dir) E:\PythonProject\Tse E:\PythonProject
+setting_path = os.path.join(parent_dir, "files", "settings.json")
 
 urls = ["https://fanyi.baidu.com",
         "https://transmart.qq.com",

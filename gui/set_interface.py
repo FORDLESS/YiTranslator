@@ -1106,6 +1106,8 @@ class SetGUI(tk.Toplevel):
         filepath = filedialog.askopenfilename(title="请选择一张图片", filetypes=[("图片", ".jpg .png .jpeg")])
         if filepath:
             self.bg[f] = filepath
+            self.apply_set(f)
+        # 仅选择图片而未应用会出现图片路径拼接错误，所以直接执行应用
 
     def tp_set(self, f, v):
         self.tp[f] = int(float(v))
@@ -1117,7 +1119,7 @@ class SetGUI(tk.Toplevel):
             return
         b = public.transparency(a, self.tp[f])[0]
         self.bg[f] = "custom_%s.png" % f
-        b.save("files/res/custom_%s.png" % f, "PNG")
+        b.save(Global.parent_dir + "/files/res/custom_%s.png" % f, "PNG")
         set_config["background"] = self.bg
         save_settings(Global.setting_path)
 

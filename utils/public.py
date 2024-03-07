@@ -260,7 +260,7 @@ def resizeImage(container, image, width=None, height=None):  # 父容器，Image
         height = container.winfo_height()
     if not isinstance(image, Image.Image):
         image = Image.open(image)
-    image = image.resize((width, height), Image.ANTIALIAS)
+    image = image.resize((width, height))
     photo = ImageTk.PhotoImage(image)
     return image, photo
 
