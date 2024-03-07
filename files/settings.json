@@ -113,7 +113,7 @@
     "background": {
         "bg": "background1.png",
         "bg2": "background2.png",
-        "spr": 0.92
+        "spr": 1.0
     },
     "language": "英语",
     "selected_languages": [
