@@ -247,7 +247,6 @@ class ImageLoader:
         photo = ImageTk.PhotoImage(image)
         if name not in self.image:
             self.image[name] = photo
-            print(self.image[name])
         return image  # 顺便返回Image对象可能有用
 
     def get_image(self, name):
