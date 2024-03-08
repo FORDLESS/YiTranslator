@@ -27,7 +27,23 @@
 支持复制原文/译文
 
 支持隐藏UI
+```
+project for package
+parent dir
+│   files dir
+│   │   ocr
+│   │   plugins
+│   │   res
+│   │   log.txt
+│   │   settings.json
+│   │   readme.docx
+│   │
+└───project dir
+    │   getText
+    │   gui
+    │   ...
 
+```
 ## 引用
 
 <details>
@@ -36,5 +52,6 @@
 * [PaddlePaddle/PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR)
   
 * [UlionTse/translators](https://github.com/UlionTse/translators)
-  
+
+* [HIllya51/LunaTranslator](https://github.com/HIllya51/LunaTranslator)
 </details>

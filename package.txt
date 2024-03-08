@@ -4,4 +4,4 @@ nuitka --standalone --show-memory --show-progress --windows-disable-console --in
 --windows-company-name="None" --windows-product-name="YiTse" --windows-product-version=1.0 --windows-file-version=1.0.2 --windows-file-description="for win10 1080P only" --copyright="Copyright @2024 Yisay"
 
 
-nuitka --standalone --show-memory --show-progress --windows-disable-console --follow-import-to=translator,ocrengine,utils,gui,getText --plugin-enable=tk-inter --windows-company-name="None" --windows-product-name="YiTse" --windows-product-version=1.0 --windows-file-version=1.0.2 --windows-file-description="for win10 1080P only" --copyright="Copyright @2024 Yisay" --output-dir=output --windows-icon-from-ico=./icon.ico YiTse.py
+nuitka --standalone --show-memory --show-progress --windows-disable-console --follow-import-to=ocrengine,utils,gui,getText --plugin-enable=tk-inter --windows-company-name="None" --windows-product-name="YiTse" --windows-product-version=1.0 --windows-file-version=1.0.2 --windows-file-description="for win10 1080P only" --copyright="Copyright @2024 Yisay" --output-dir=output --windows-icon-from-ico=./icon.ico YiTse.py
